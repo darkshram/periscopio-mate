@@ -13,7 +13,7 @@ Current supported services
 - http://www.subswiki.com/
 - http://www.podnapisi.net/
 - http://www.subtitlesource.org/
-- http://legendas.tv/ (requires a personnal username/password)
+- http://legendas.tv/ (requires username/password)
 - http://www.addic7ed.com/
 - http://www.opensubtitles.org/
 - http://subscene.com/
