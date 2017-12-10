@@ -25,6 +25,7 @@ Installation.
 ============
 
 ```bash
+git clone https://github.com/darkshram/periscopio-mate
 cd periscopio-mate
 python2 setup.py --install
 install -m 0755 bin/periscopio-caja/periscopio-caja.py* \
