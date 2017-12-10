@@ -21,6 +21,16 @@ Current supported services
 - http://subscene.com/
 - http://www.tvsubtitles.net/
 
+Installation.
+============
+
+cd periscopio-mate
+python2 setup.py --install
+install -m 0755 bin/periscopio-caja/periscopio-caja.py* \
+    /usr/share/python-caja/extensions/
+
+Then restart caja.
+
 Configuration.
 =============
 
