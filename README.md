@@ -1,4 +1,4 @@
-periscopio
+periscopio-mate
 ============
 
 A Python2 module to search and download subtitles, forked from [persicope](https://github.com/patrickdessalle/periscope) by Patrick Dessalle.
