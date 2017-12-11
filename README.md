@@ -31,6 +31,9 @@ python2 setup.py build
 python2 setup.py install
 install -m 0755 bin/periscopio-caja/periscopio-caja.py* \
     /usr/share/python-caja/extensions/
+for n in po/*.mo ; do
+        install -p -D -m0644 $n /usr/share/locale/`basename $n .mo`/LC_MESSAGES/periscopio-caja.mo
+done
 ```
 
 Then restart caja.
