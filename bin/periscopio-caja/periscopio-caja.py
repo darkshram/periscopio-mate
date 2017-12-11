@@ -25,7 +25,13 @@ from Queue import Empty
 from time import sleep
 # import urllib2
 import os
+# Localization
+import locale
+locale.setlocale(locale.LC_ALL, '')
+
 import gettext
+_ = lambda x: gettext.ldgettext("periscopio-caja", x)
+
 # import logging
 import xdg.BaseDirectory as bd # required
 try:
@@ -36,9 +42,6 @@ except ImportError:
     pass
 
 import periscopio
-
-# i18n stuff
-gettext.install('periscopio-caja')
 
 class DownloadSubtitles(GObject.GObject, Caja.MenuProvider):
     ''' This class is to be used in Caja with the python-caja extension. 

@@ -3,7 +3,7 @@ from setuptools import setup
 PACKAGE = 'periscopio'
 
 setup(name = PACKAGE,
-      version = '1.18.0',
+      version = '1.18.1',
       license = "GNU LGPL",
       description = "Python module to download subtitles for a given video file",
       author = "Joel Barrios",
