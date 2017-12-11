@@ -3,7 +3,7 @@ periscopio
 
 A Python2 module to search and download subtitles, forked from [persicope](https://github.com/patrickdessalle/periscope) by Patrick Dessalle.
 
-Code is still in development and some services may need bugfixes. Expect some warnings and errors in ~/.xsession-errors.
+Expect some network connection warnings and errors in ~/.xsession-errors for some services if they are unreachable from your location.
 
 Current supported services
 ==========================
