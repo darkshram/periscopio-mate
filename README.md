@@ -57,8 +57,8 @@ pass =
 unrarpath =
 supportedsubtitleextensions =
 ```
-- Set your default language.
-- Set if you want to append the language name to the subtitle file.
+- Language is detected by default. But if you want to manually set a different one from used in the the desktop environment, then set the desired language.
+- Set if you want to append the language name to the subtitle file. Default is no.
 - Set if you want to use a plugin in particular. Empty means use all.
      -Addic7ed
      -LegendasTV
@@ -72,7 +72,7 @@ supportedsubtitleextensions =
      -SubtitleSource
      -TheSubDB
      -TvSubtitles
-- Set user and password of LegendasTV in case you have one account there.
+- Set user and password for LegendasTV in case you have one account there.
 
 Screenshots.
 ===========
