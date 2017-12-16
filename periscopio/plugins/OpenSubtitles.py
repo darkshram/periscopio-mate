@@ -24,16 +24,16 @@ import SubtitleDatabase
 
 log = logging.getLogger(__name__)
 
-OS_LANGS ={ "en": "eng", 
-            "fr" : "fre", 
-            "hu": "hun", 
-            "cs": "cze", 
-            "pl" : "pol", 
-            "sk" : "slo", 
-            "pt" : "por", 
-            "pt-br" : "pob", 
-            "es" : "spa", 
-            "el" : "ell", 
+OS_LANGS = {"en": "eng",
+            "fr" : "fre",
+            "hu": "hun",
+            "cs": "cze",
+            "pl" : "pol",
+            "sk" : "slo",
+            "pt" : "por",
+            "pt-br" : "pob",
+            "es" : "spa",
+            "el" : "ell",
             "ar":"ara",
             'sq':'alb',
             "hy":"arm",
@@ -80,14 +80,14 @@ OS_LANGS ={ "en": "eng",
 class OpenSubtitles(SubtitleDatabase.SubtitleDB):
     url = "https://www.opensubtitles.org/"
     site_name = "OpenSubtitles"
-    
+
     def __init__(self, config, cache_folder_path):
         super(OpenSubtitles, self).__init__(OS_LANGS)
         self.server_url = 'https://api.opensubtitles.org/xml-rpc'
-        self.revertlangs = dict(map(lambda item: (item[1],item[0]), self.langs.items()))
+        self.revertlangs = dict(map(lambda item: (item[1], item[0]), self.langs.items()))
 
     def process(self, filepath, langs):
-        ''' main method to call on the plugin, pass the filename and the wished 
+        ''' main method to call on the plugin, pass the filename and the wished
         languages and it will query OpenSubtitles.org '''
         if os.path.isfile(filepath):
             filehash = self.hashFile(filepath)
@@ -98,7 +98,7 @@ class OpenSubtitles(SubtitleDatabase.SubtitleDB):
         else:
             fname = self.getFileName(filepath)
             return self.query(langs=langs, filename=fname)
-        
+
     def createFile(self, subtitle):
         '''pass the URL of the sub and the file it matches, will unzip it
         and return the path to the created file'''
@@ -131,12 +131,12 @@ class OpenSubtitles(SubtitleDatabase.SubtitleDB):
             guessed_data = self.guessFileData(filename)
             search['query'] = guessed_data['name']
             log.debug(search['query'])
-            
+
         #Login
         self.server = xmlrpclib.Server(self.server_url)
         socket.setdefaulttimeout(10)
         try:
-            log_result = self.server.LogIn("","","eng","periscopio")
+            log_result = self.server.LogIn("", "", "eng", "periscopio")
             log.debug(log_result)
             token = log_result["token"]
         except Exception:
@@ -146,8 +146,8 @@ class OpenSubtitles(SubtitleDatabase.SubtitleDB):
             return []
         if not token:
             log.error("Open subtitles did not return a token after logging in.")
-            return []            
-            
+            return []
+
         # Search
         self.filename = filename #Used to order the results
         sublinks += self.get_results(token, search)
@@ -159,8 +159,7 @@ class OpenSubtitles(SubtitleDatabase.SubtitleDB):
             log.error("Open subtitles could not be contacted for logout")
         socket.setdefaulttimeout(None)
         return sublinks
-        
-        
+
     def get_results(self, token, search):
         log.debug("query: token='%s', search='%s'" % (token, search))
         try:
@@ -183,23 +182,23 @@ class OpenSubtitles(SubtitleDatabase.SubtitleDB):
                 result["link"] = r['SubDownloadLink']
                 result["page"] = r['SubDownloadLink']
                 result["lang"] = self.getLG(r['SubLanguageID'])
-                if search.has_key("query") : #We are using the guessed file name, let's remove some results
+                if search.has_key("query"): #We are using the guessed file name, let's remove some results
                     if r["MovieReleaseName"].startswith(self.filename):
                         sublinks.append(result)
                     else:
                         log.debug("Removing %s because release '%s' has not right start %s" %(result["release"], r["MovieReleaseName"], self.filename))
-                else :
+                else:
                     sublinks.append(result)
         return sublinks
 
     def sort_by_moviereleasename(self, x, y):
         ''' sorts based on the movierelease name tag. More matching, returns 1'''
         #TODO add also support for subtitles release
-        xmatch = x['MovieReleaseName'] and (x['MovieReleaseName'].find(self.filename)>-1 or self.filename.find(x['MovieReleaseName'])>-1)
-        ymatch = y['MovieReleaseName'] and (y['MovieReleaseName'].find(self.filename)>-1 or self.filename.find(y['MovieReleaseName'])>-1)
+        xmatch = x['MovieReleaseName'] and (x['MovieReleaseName'].find(self.filename) > -1 or self.filename.find(x['MovieReleaseName']) > -1)
+        ymatch = y['MovieReleaseName'] and (y['MovieReleaseName'].find(self.filename) > -1 or self.filename.find(y['MovieReleaseName']) > -1)
         #print "analyzing %s and %s = %s and %s" %(x['MovieReleaseName'], y['MovieReleaseName'], xmatch, ymatch)
         if xmatch and ymatch:
-            if x['MovieReleaseName'] == self.filename or x['MovieReleaseName'].startswith(self.filename) :
+            if x['MovieReleaseName'] == self.filename or x['MovieReleaseName'].startswith(self.filename):
                 return -1
             return 0
         if not xmatch and not ymatch:
