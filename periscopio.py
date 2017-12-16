@@ -24,6 +24,7 @@ import mimetypes
 from optparse import OptionParser
 import logging
 import periscopio
+import string
 
 log = logging.getLogger(__name__)
 
@@ -32,7 +33,7 @@ SUPPORTED_FORMATS = 'video/x-msvideo', 'video/quicktime', 'video/x-matroska', 'v
 def main():
     '''Download subtitles'''
     # parse command line options
-    parser = OptionParser("usage: %prog [options] file1 file2", version = periscopio.VERSION)
+    parser = OptionParser("usage: %prog [options] file1 file2", version=periscopio.VERSION)
     parser.add_option("-l", "--language", action="append", dest="langs", help="wanted language (ISO 639-1 two chars) for the subtitles (fr, en, ja, ...). If none is specified will download a subtitle in any language. This option can be used multiple times like %prog -l fr -l en file1 will try to download in french and then in english if no french subtitles are found.")
     parser.add_option("-f", "--force", action="store_true", dest="force_download", help="force download of a subtitle even there is already one present")
     parser.add_option("-q", "--query", action="append", dest="queries", help="query to send to the subtitles website")
@@ -48,11 +49,11 @@ def main():
         exit()
 
     # process args
-    if options.debug :
+    if options.debug:
         logging.basicConfig(level=logging.DEBUG)
-    elif options.quiet :
+    elif options.quiet:
         logging.basicConfig(level=logging.WARN)
-    else :
+    else:
         logging.basicConfig(level=logging.INFO)
         
 
@@ -127,7 +128,7 @@ def recursive_search(entry, options):
                 files.append(os.path.normpath(entry))
             else:
                 log.info("Skipping file %s as it already has a subtitle. Use the --force option to force the download" % entry)
-        else :
+        else:
             log.info("%s mimetype is '%s' which is not a supported video format (%s)" %(entry, mimetype, SUPPORTED_FORMATS))
     return files
     

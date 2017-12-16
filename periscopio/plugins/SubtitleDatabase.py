@@ -21,14 +21,15 @@ import os, shutil, urllib2, sys, logging, traceback, zipfile
 import struct
 import socket # For timeout purposes
 import re
+import string
 
 log = logging.getLogger(__name__)
 
-USER_AGENT = 'Mozilla/5.0 (X11; U; Linux x86_64; en-US; rv:1.9.1.3)'
+USER_AGENT = 'Mozilla/5.0 (X11; Fedora; Linux x86_64; rv:52.0) Gecko/20100101 Firefox/52.0'
 
 class SubtitleDB(object):
     ''' Base (kind of abstract) class that represent a SubtitleDB, usually a website. Should be rewritten using abc module in Python 2.6/3K'''
-    def __init__(self, langs, revertlangs = None):
+    def __init__(self, langs, revertlangs=None):
         if langs:
             self.langs = langs
             self.revertlangs = dict(map(lambda item: (item[1], item[0]), self.langs.items()))
@@ -50,9 +51,9 @@ class SubtitleDB(object):
             log.exception("Error occured")
             subs = []
         queue.put(subs, True) # Each plugin must write as the caller periscopy.py waits for an result on the queue
-    
+
     def process(self, filepath, langs):
-        ''' main method to call on the plugin, pass the filename and the wished 
+        ''' main method to call on the plugin, pass the filename and the wished
         languages and it will query the subtitles source '''
         fname = self.getFileName(filepath)
         try:
@@ -60,7 +61,7 @@ class SubtitleDB(object):
         except Exception, e:
             log.exception("Error occured")
             return []
-        
+
     def createFile(self, subtitle):
         '''pass the URL of the sub and the file it matches, will unzip it
         and return the path to the created file'''
@@ -69,7 +70,7 @@ class SubtitleDB(object):
         srtbasefilename = videofilename.rsplit(".", 1)[0]
         zipfilename = srtbasefilename +".zip"
         self.downloadFile(suburl, zipfilename)
-        
+
         if zipfile.is_zipfile(zipfilename):
             log.debug("Unzipping file " + zipfilename)
             zf = zipfile.ZipFile(zipfilename, "r")
@@ -90,7 +91,7 @@ class SubtitleDB(object):
             os.remove(zipfilename)
             return None
 
-    def downloadContent(self, url, timeout = None):
+    def downloadContent(self, url, timeout=None):
         ''' Downloads the given url and returns its contents.'''
         try:
             log.debug("Downloading %s" % url)
@@ -113,28 +114,28 @@ class SubtitleDB(object):
         dump.write(content)
         dump.close()
         log.debug("Download finished to file %s. Size : %s"%(filename, os.path.getsize(filename)))
-        
+
     def getLG(self, language):
         ''' Returns the short (two-character) representation of the long language name'''
         try:
             return self.revertlangs[language]
         except KeyError, e:
             log.warn("Ooops, you found a missing language in the config file of %s: %s. Send a bug report to have it added." %(self.__class__.__name__, language))
-        
+
     def getLanguage(self, lg):
         ''' Returns the long naming of the language on a two character code '''
         try:
             return self.langs[lg]
         except KeyError, e:
             log.warn("Ooops, you found a missing language in the config file of %s: %s. Send a bug report to have it added." %(self.__class__.__name__, lg))
-    
+
     def query(self, token):
         raise TypeError("%s has not implemented method '%s'" %(self.__class__.__name__, sys._getframe().f_code.co_name))
-        
+
     def fileExtension(self, filename):
         ''' Returns the file extension (without the dot)'''
         return os.path.splitext(filename)[1][1:].lower()
-        
+
     def getFileName(self, filepath):
         if os.path.isfile(filepath):
             filename = os.path.basename(filepath)
@@ -145,7 +146,7 @@ class SubtitleDB(object):
         else:
             fname = filename
         return fname
-        
+
     def guessFileData(self, filename):
         filename = unicode(self.getFileName(filename).lower())
         matches_tvshow = self.tvshowRegex.match(filename)
@@ -167,45 +168,45 @@ class SubtitleDB(object):
                     (movie, year, teams) = matches_movie.groups()
                     teams = teams.split('.')
                     part = None
-                    if "cd1" in teams :
+                    if "cd1" in teams:
                         teams.remove('cd1')
                         part = 1
-                    if "cd2" in teams :
+                    if "cd2" in teams:
                         teams.remove('cd2')
                         part = 2
                     return {'type' : 'movie', 'name' : movie.strip(), 'year' : year, 'teams' : teams, 'part' : part}
                 else:
-                    return {'type' : 'unknown', 'name' : filename, 'teams' : [] }
+                    return {'type' : 'unknown', 'name' : filename, 'teams' : []}
 
     def hashFile(self, name):
         '''
         Calculates the Hash à-la Media Player Classic as it is the hash used by OpenSubtitles.
         By the way, this is not a very robust hash code.
-        ''' 
+        '''
         longlongformat = 'Q'  # unsigned long long little endian
         bytesize = struct.calcsize(longlongformat)
-        format= "<%d%s" % (65536//bytesize, longlongformat)
-        
-        f = open(name, "rb") 
+        format = "<%d%s" % (65536//bytesize, longlongformat)
+
+        f = open(name, "rb")
         filesize = os.fstat(f.fileno()).st_size
-        hash = filesize 
-        
+        hash = filesize
+
         if filesize < 65536 * 2:
             log.error('File is too small')
-            return "SizeError" 
-        
-        buffer= f.read(65536)
-        longlongs= struct.unpack(format, buffer)
-        hash+= sum(longlongs)
-        
+            return "SizeError"
+
+        buffer = f.read(65536)
+        longlongs = struct.unpack(format, buffer)
+        hash += sum(longlongs)
+
         f.seek(-65536, os.SEEK_END) # size is always > 131072
-        buffer= f.read(65536)
-        longlongs= struct.unpack(format, buffer)
-        hash+= sum(longlongs)
-        hash&= 0xFFFFFFFFFFFFFFFF
-        
-        f.close() 
-        returnedhash =  "%016x" % hash
+        buffer = f.read(65536)
+        longlongs = struct.unpack(format, buffer)
+        hash += sum(longlongs)
+        hash &= 0xFFFFFFFFFFFFFFFF
+
+        f.close()
+        returnedhash = "%016x" % hash
         return returnedhash
 
 
