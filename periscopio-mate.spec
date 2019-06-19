@@ -1,6 +1,6 @@
 Name:          periscopio-mate
 Version:       1.18.1
-Release:       1%{?dist}
+Release:       2%{?dist}
 Summary:       Python module to download subtitles for a given video file.
 Group:         Applications/Multimedia
 License:       GPLv2+
@@ -31,9 +31,9 @@ Patrick Dessalle.
 
 %install
 %py2_install
-mkdir -p %{buildroot}%{_datadir}/python-caja/extensions/
+mkdir -p %{buildroot}%{_datadir}/caja-python/extensions/
 install -m 0755 bin/periscopio-caja/periscopio-caja.py* \
-    %{buildroot}%{_datadir}/python-caja/extensions/
+    %{buildroot}%{_datadir}/caja-python/extensions/
 
 # Translations.
 for n in po/*.mo ; do
@@ -47,12 +47,15 @@ done
 %doc AUTHORS.md NEWS.md README.md
 %license LICENSE.md
 %{_bindir}/periscopio
-%{_datadir}/python-caja/extensions/periscopio-caja*
+%{_datadir}/caja-python/extensions/periscopio-caja*
 %{python2_sitelib}/periscopio.py*
 %{python2_sitelib}/periscopio/
 %{python2_sitelib}/periscopio-%{version}*
 
 %changelog
+* Wed Jun 19 2019 Joel Barrios <http://www.alcancelibre.org/> - 1.18.1-2
+- Rebuild for python-caja 1.22.0.
+
 * Mon Dec 11 2017 Joel Barrios <http://www.alcancelibre.org/> - 1.18.1-1
 - Update to 1.18.1.
 - Localization now works.
